@@ -1,1 +1,45 @@
+pipeline:
+  name: PTE
+  identifier: PTE
+  projectIdentifier: VN
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: VikramGITPTE
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec:
+              imageSpec:
+                imageName: ubuntu-latest
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Build_and_Push_PTE
+                  identifier: Build_and_Push_PTE
+                  spec:
+                    connectorRef: Vikram_Docker
+                    repo: vikramtek/harness-pte
+                    tags:
+                      - pte-main-<+codebase.shortCommitSha>
+                    caching: true
 
