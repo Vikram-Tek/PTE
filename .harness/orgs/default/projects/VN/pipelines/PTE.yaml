@@ -13,14 +13,16 @@ pipeline:
     - stage:
         name: Build_and_Push_PTE
         identifier: Build
-        description: ""
+        description: PTE CI Pipeline - Compile, Cache, Build & Push
         type: CI
         spec:
           cloneCodebase: true
           caching:
             enabled: true
             override: true
-            paths: []
+            paths:
+              - /root/.cache/go-build
+              - /go/pkg/mod
           buildIntelligence:
             enabled: true
           platform:
@@ -34,6 +36,33 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Run
+                  name: Install_Go
+                  identifier: Install_Go
+                  spec:
+                    shell: Sh
+                    command: |
+                      sudo apt update
+                      sudo apt install -y golang
+                      go version
+              - step:
+                  type: Run
+                  name: Go_Mod_Download
+                  identifier: Go_Mod_Download
+                  spec:
+                    shell: Sh
+                    command: |
+                      go mod download
+              - step:
+                  type: Run
+                  name: Go_Build
+                  identifier: Go_Build
+                  spec:
+                    shell: Sh
+                    command: |
+                      go build -o app main.go
+                      ls -l
+              - step:
                   type: BuildAndPushDockerRegistry
                   name: BuildAndPushDockerRegistry_1
                   identifier: BuildAndPushDockerRegistry_1
@@ -42,4 +71,5 @@ pipeline:
                     repo: vikramtek/harness-pte
                     tags:
                       - pte-main-<+codebase.shortCommitSha>
+                    dockerfile: Dockerfile
                     caching: true
