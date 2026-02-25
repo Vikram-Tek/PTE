@@ -11,7 +11,7 @@ pipeline:
         build: <+input>
   stages:
     - stage:
-        name: Build
+        name: Build_and_Push_PTE
         identifier: Build
         description: ""
         type: CI
@@ -20,6 +20,7 @@ pipeline:
           caching:
             enabled: true
             override: true
+            paths: []
           buildIntelligence:
             enabled: true
           platform:
@@ -34,12 +35,11 @@ pipeline:
             steps:
               - step:
                   type: BuildAndPushDockerRegistry
-                  name: Build_and_Push_PTE
-                  identifier: Build_and_Push_PTE
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
                   spec:
                     connectorRef: Vikram_Docker
                     repo: vikramtek/harness-pte
                     tags:
                       - pte-main-<+codebase.shortCommitSha>
                     caching: true
-
